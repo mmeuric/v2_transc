@@ -1,0 +1,9 @@
+http.host: "0.0.0.0"
+http.port: 9600
+node.name: "logstash"
+path.data: /usr/share/logstash/data
+path.logs: /usr/share/logstash/logs
+
+# Pipeline settings
+pipeline.unsafe_shutdown: true
+queue.type: persisted

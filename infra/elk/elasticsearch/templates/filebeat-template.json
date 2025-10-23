@@ -1,0 +1,17 @@
+{
+  "index_patterns": [
+    "filebeat-*"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "logs-delete-after-14d",
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    }
+  },
+  "priority": 500,
+  "composed_of": [],
+  "_meta": {
+    "description": "Apply ILM delete-only (14d) to filebeat-*"
+  }
+}
