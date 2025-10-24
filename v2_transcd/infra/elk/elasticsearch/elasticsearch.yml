@@ -1,0 +1,9 @@
+cluster.name: "transcendence-elk"
+network.host: 0.0.0.0
+discovery.type: single-node
+
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+# Sécurité désactivée en dev
+xpack.security.enabled: true  # sécurité minimale (auth basique)

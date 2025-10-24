@@ -1,0 +1,66 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # Prometheus self
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # Node (host) metrics
+  - job_name: 'node'
+    static_configs:
+      - targets: ['host.docker.internal:9100','node-exporter:9100']
+
+  # Docker container metrics via cAdvisor
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  # Blackbox probes of HTTP endpoints (auth-service, gateway if present)
+  - job_name: 'blackbox_http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://auth-service:4000/health
+          - http://gateway:4001/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  # App
+  - job_name: 'app_auth'
+    static_configs:
+      - targets: ['auth-service:4000'] 
+    metrics_path: /metrics
+
+  - job_name: 'app_gateway'
+    static_configs:
+      - targets: ['gateway:4001']
+    metrics_path: /metrics
+
+  - job_name: 'app_game'
+    static_configs:
+      - targets: ['game-service:4002']
+    metrics_path: /metrics
+
+  - job_name: 'app_database'
+    static_configs:
+      - targets: ['api_bdd:3020']
+    metrics_path: /metrics
+
+  - job_name: 'app_blockchain'
+    static_configs:
+      - targets: ['APIBC:3021']
+    metrics_path: /metrics
+

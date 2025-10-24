@@ -1,0 +1,50 @@
+groups:
+  - name: basic-health
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.job }} on {{ $labels.instance }} has been unreachable for 2 minutes."
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU > 85% for 10m."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "RAM > 90% for 10m."
+
+      - alert: ContainerRestarts
+        expr: rate(container_last_seen[5m]) == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container may have restarted or disappeared"
+          description: "Container not seen in last 5m via cAdvisor."
+
+  - name: http
+    rules:
+      - alert: HighHTTPErrorRate
+        expr: |
+          (sum(rate(probe_http_status_code{job="blackbox_http"}[5m]) * on(instance) group_left() (probe_success == 0)) > 0)
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP probe failed for {{ $labels.instance }}"
+          description: "Blackbox probe failing for 2+ minutes."
