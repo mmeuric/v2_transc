@@ -1,7 +1,0 @@
-{
-  "type": "fs",
-  "settings": {
-    "location": "/usr/share/elasticsearch/snapshots",
-    "compress": true
-  }
-}
