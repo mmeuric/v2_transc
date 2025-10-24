@@ -11,7 +11,7 @@ COPY logstash.yml /usr/share/logstash/config/logstash.yml
 COPY pipeline/logstash.conf /usr/share/logstash/pipeline/logstash.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-EXPOSE 5044 5000 9600
+EXPOSE 5044 9600
 
 # Donner les bons droits à l'utilisateur logstash
 RUN chmod +x /usr/local/bin/entrypoint.sh && \
